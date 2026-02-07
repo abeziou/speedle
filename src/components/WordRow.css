@@ -1,0 +1,38 @@
+.wordrow {
+    display: flex
+}
+
+.letterbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em;
+    margin: 5px;
+    height: 1em;
+    width: 1em;
+}
+
+.unfilled {
+    border: 2px grey solid;
+}
+
+.unguessed {
+    border: 2px black solid;
+}
+
+.guessed {
+    color: white;
+    border: 2px rgba(0,0,0, 0) solid;
+}
+
+.outOfPosition {
+    background-color: #F2B949;
+}
+
+.correct {
+    background-color: #88E788;
+}
+
+.notInWord {
+    background-color: #D3D3D3;
+}
