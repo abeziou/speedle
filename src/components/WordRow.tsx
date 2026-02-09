@@ -1,6 +1,7 @@
 import "./WordRow.css"
 
 export const LetterStatus = {
+    UNGUESSED: "unguessed",
     NOT_IN_WORD: "notInWord",
     OUT_OF_POSITION: "outOfPosition",
     CORRECT: "correct"
@@ -21,7 +22,7 @@ const WordRow = (props: WordRowProps) => {
         if (props.results && i < props.results.length) {
             letterStatus = `${props.results[i]} guessed`
         } else if (letter !== "") {
-            letterStatus = "unguessed"
+            letterStatus = LetterStatus.UNGUESSED
         }
         letterBoxes.push(
             <span className={`letterbox ${letterStatus}`}>

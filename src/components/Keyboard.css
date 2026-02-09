@@ -1,0 +1,44 @@
+.keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.keyboardRow {
+    display: flex;
+}
+
+.key {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15%;
+    height: 1.5em;
+    width: 1em;
+    margin: 0.1em;
+    border: 2px rgba(0,0,0,0) solid;
+}
+
+.special-key {
+    width: max-content;
+}
+
+.unguessed-key {
+    color: black;
+    background-color: #D3D3D3;
+}
+
+.outOfPosition-key {
+    color: white;
+    background-color: #F2B949;
+}
+
+.correct-key {
+    color: white;
+    background-color: #50C878;
+}
+
+.notInWord-key {
+    color: white;
+    background-color: #898989;
+}

@@ -1,15 +1,18 @@
+import Keyboard from './components/Keyboard'
 import WordRow, { LetterStatus } from './components/WordRow'
 import './Home.css'
 
 const Home = () => {
-  let letterStatus: LetterStatus[] = [LetterStatus.CORRECT, LetterStatus.NOT_IN_WORD, LetterStatus.OUT_OF_POSITION]
-  let letters: string[] = ["T", "e", "s", "t"]
+  let pastGuesses: string[][] = []
+  let pastResults: LetterStatus[][] = []
+  let currentLetters: string[] = []
   return (
     <div>
       <header>
-        EVIL WORDLE
+        <span style={{color: "red"}}>(EVIL)</span> WORDLE
       </header>
-      <WordRow length={5} letters={letters} results={letterStatus} />
+      <WordRow length={5} letters={currentLetters} results={[]}/>
+      <Keyboard letterStatus={new Map<string, LetterStatus>()} />
     </div>
   )
 }
