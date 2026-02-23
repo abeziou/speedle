@@ -2,10 +2,14 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    flex-direction: column;
 }
 
 .keyboardRow {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: auto;
 }
 
 .key {
@@ -13,10 +17,9 @@
     justify-content: center;
     align-items: center;
     border-radius: 15%;
-    height: 1.5em;
-    width: 1em;
     margin: 0.1em;
     border: 2px rgba(0,0,0,0) solid;
+    padding: 0.3em;
 }
 
 .special-key {
