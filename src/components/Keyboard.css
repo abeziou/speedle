@@ -20,6 +20,12 @@
     margin: 0.1em;
     border: 2px rgba(0,0,0,0) solid;
     padding: 0.3em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    height: 3em;
+    width: 2em;
 }
 
 .special-key {

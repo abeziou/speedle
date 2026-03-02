@@ -23,7 +23,7 @@ const WordRowPanel = (props: WordRowPanelProps) => {
         wordRows.push(<WordRow length={props.rowLength} letters={letters} results={results}/>)
     }
 
-    return wordRows
+    return <div className="wordrowpanel">{wordRows}</div>
 }
 
 export default WordRowPanel

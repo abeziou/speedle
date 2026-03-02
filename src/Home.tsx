@@ -3,14 +3,12 @@ import './Home.css'
 
 const numberOfGuesses = 5
 const rowLength = 5
+const wordSetSize = 30
 
 const Home = () => {
   return (
     <div>
-      <header>
-        <span style={{color: "red"}}>(EVIL)</span> WORDLE
-      </header>
-      <Game />
+      <Game numberOfGuesses={numberOfGuesses} rowLength={rowLength} wordSetSize={wordSetSize} />
     </div>
   )
 }
