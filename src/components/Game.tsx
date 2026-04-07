@@ -1,27 +1,16 @@
 import Keyboard from './Keyboard'
-import { LetterStatus, getLetterStatusOrdinal } from "../types/Types"
+import { GameResult, LetterStatus, getLetterStatusOrdinal } from "../types/Types"
 import { useEffect, useState } from 'react'
-import type { Guess } from '../types/Types'
+import { type Guess, type GameSettings, GameState } from '../types/Types'
 import WordRowPanel from './WordRowPanel'
-import WordData from '../assets/words.json'
+import ResultDialog from './ResultDialog'
+import { ValidChoiceList, ValidGuessSet, WORD_LENGTH } from '../words/Constants'
 
-
-const wordLists: Record<string, string[]> = WordData
 
 type GameProps = {
     numberOfGuesses: number;
     rowLength: number;
     wordSetSize: number;
-}
-
-// shuffleWords shuffles a word list in place using Fisher-Yates
-const shuffleWords = (words: string[]) => {
-    for (let i = 0; i < words.length; i++) {
-        let j = Math.floor(Math.random() * (words.length + 1))
-        let tmp = words[j]
-        words[j] = words[i]
-        words[i] = tmp
-    }
 }
 
 // makeGoodGuess returns the results for a guess against a chosen word in a "good" game
@@ -44,48 +33,46 @@ const makeEvilGuess = (letters: string[], wordSet: string[]): LetterStatus[] => 
     return results
 }
 
-const Game = (props: GameProps) => {
-    const [lettersStatus, setLetterStatus] = useState<Map<string, LetterStatus>>(new Map<string, LetterStatus>())
-    const [pastGuesses, setPastGuesses] = useState<Guess[]>([])
-    const [currentLetters, setCurrentLetters] = useState<string[]>([])
-    const [isEvil, setIsEvil] = useState<boolean>(false)
-    const [chosenWord, setChosenWord] = useState<string>("")
-    const [wordSet, setWordSet] = useState<string[]>([])
+const getDefaultSettings = () => {
+    let defaultSettings: GameSettings = {
+        numberOfGuesses: 5,
+        wordSetSize: 30,
+        isEvil: false
+    }
+    return defaultSettings
+}
 
-    useEffect(() => {
-        onNewGame()
-    }, [])
+const createNewGame = (settings: GameSettings) => {
+    let newGame = new GameState
+
+    if (settings.isEvil) {
+        let newWordSet = []
+        for (let i = 0; i < settings.wordSetSize && i < ValidChoiceList.length; i++) {
+            let selectedWordIndex = Math.floor(Math.random() * (ValidChoiceList.length + 1))
+            newWordSet.push(ValidChoiceList[selectedWordIndex])
+        }
+        newGame.wordSet = newWordSet
+    } else {
+        let newChosenWord = ValidChoiceList[Math.floor(Math.random() * (ValidChoiceList.length + 1))]
+        newGame.chosenWord = newChosenWord
+    }
+    return newGame
+}
+
+const Game = () => {
+    const [currentLetters, setCurrentLetters] = useState<string[]>([])
+    const [settings, setSettings] = useState<GameSettings>(getDefaultSettings())
+    const [errorMessage, setErrorMessage] = useState<null|string>(null)
+    const [gameState, setGameState] = useState<GameState>(createNewGame(getDefaultSettings()))
+    const [isResultsVisible, setIsResultsVisible] = useState<boolean>(false)
 
     const onNewGame = () => {
         setCurrentLetters([])
-        setPastGuesses([])
-        setLetterStatus(new Map<string, LetterStatus>())
-
-        const lengthKey = props.rowLength.toString()
-        if (!(lengthKey in wordLists)) {
-            throw new Error(`Invalid row length: ${lengthKey}`)
-        }
-        let words = wordLists[lengthKey]
-
-        if (isEvil) {
-            setChosenWord("")
-
-            shuffleWords(words)
-            let newWordSet = []
-            for (let i = 0; i < props.wordSetSize && i < words.length; i++) {
-                newWordSet.push(words[i])
-            }
-            setWordSet(wordSet)
-        } else {
-            setWordSet([])
-
-            let newChosenWord = words[Math.floor(Math.random() * (words.length + 1))]
-            setChosenWord(newChosenWord)
-        }
+        setGameState(createNewGame(settings))
     }
 
     const onKeyPress = (letter: string) => {
-        if (currentLetters.length >= props.rowLength) {
+        if (currentLetters.length >= WORD_LENGTH) {
             return
         }
         setCurrentLetters(currentLetters.concat(letter))
@@ -96,22 +83,35 @@ const Game = (props: GameProps) => {
     }
 
     const onEnter = () => {
-        if (currentLetters.length != props.rowLength) {
+        if (currentLetters.length != WORD_LENGTH) {
+            setErrorMessage("Not enough letters")
+            return
+        }
+        if (!ValidGuessSet.has(currentLetters.join("").toLowerCase())) {
+            setErrorMessage("Not in word list")
             return
         }
 
-        let newPastGuesses = pastGuesses
         let results: LetterStatus[]
-        if (isEvil) {
-            results = makeEvilGuess(currentLetters, wordSet)
+        if (gameState.isEvil) {
+            results = makeEvilGuess(currentLetters, gameState.wordSet)
         } else {
-            results = makeGoodGuess(currentLetters, chosenWord)
+            results = makeGoodGuess(currentLetters, gameState.chosenWord)
         }
+
+        // Check if game is won or lost
+        if (results.every(r => r === LetterStatus.CORRECT)) {
+            gameState.result = GameResult.WON
+        } else if (gameState.pastGuesses.length === settings.numberOfGuesses - 1) {
+            gameState.result = GameResult.LOST
+        }
+
         let newGuess: Guess = {
             letters: currentLetters,
             results: results
         }
-        let newLetterStatus = lettersStatus
+        gameState.pastGuesses.push(newGuess)
+        let newLetterStatus = gameState.lettersStatus
         currentLetters.forEach((l, i) => {
             if (!newLetterStatus.has(l)) {
                 newLetterStatus.set(l, results[i])
@@ -124,18 +124,34 @@ const Game = (props: GameProps) => {
                 return
             }
         })
-        newPastGuesses.push(newGuess)
-        setPastGuesses(newPastGuesses)
+        gameState.lettersStatus = newLetterStatus
+
+
+        setGameState(gameState)
         setCurrentLetters([])
     }
 
     return (
         <div>
             <h3>
-                <span onClick={() => setIsEvil(!isEvil)} style={{color: isEvil ? "red" : "green"}}>({isEvil ? "EVIL" : "GOOD"})</span> WORDLE
+                <span style={{color: settings.isEvil ? "red" : "green"}}>({settings.isEvil ? "EVIL" : "GOOD"})</span> WORDLE
             </h3>
-            <WordRowPanel rowCount={props.numberOfGuesses} rowLength={props.rowLength} currentLetters={currentLetters} pastGuesses={pastGuesses} />
-            <Keyboard letterStatus={lettersStatus} onKeyPress={onKeyPress} onEnter={onEnter} onBackspace={onBackspace}/>
+            <WordRowPanel rowCount={settings.numberOfGuesses} rowLength={WORD_LENGTH} currentLetters={currentLetters} pastGuesses={gameState.pastGuesses} />
+            {errorMessage !== null && <span style={{color: "red"}}>{errorMessage}</span>}
+            <Keyboard 
+                letterStatus={gameState.lettersStatus} 
+                onKeyPress={onKeyPress} 
+                onEnter={onEnter} 
+                onBackspace={onBackspace}
+                disabled={gameState.result !== undefined}
+            />
+            <ResultDialog 
+                isVisible={isResultsVisible} 
+                setIsVisible={setIsResultsVisible} 
+                onNewGame={onNewGame} 
+                result={gameState.result} 
+                getCorrectWord={gameState.getCorrectWord}
+            />
         </div>
     )
 }

@@ -2,6 +2,7 @@ import { LetterStatus } from "../types/Types"
 import "./Keyboard.css"
 
 type KeyboardProps = {
+    disabled?: boolean;
     letterStatus: Map<string, LetterStatus>;
     onKeyPress: (letter: string, isEnter: boolean, isBackspace: boolean) => any;
     onEnter: () => any;
@@ -17,7 +18,7 @@ const Keyboard = (props: KeyboardProps) => {
         let keys: React.ReactElement[] = []
         if (rowIndex === lettersPerRow.length - 1) {
             keys.push(
-                <button className="key special-key unguessed-key" onMouseDown={() => props.onEnter()}>
+                <button disabled={props.disabled} className="key special-key unguessed-key" onMouseDown={() => props.onEnter()}>
                     ENTER
                 </button>
             )
@@ -26,7 +27,7 @@ const Keyboard = (props: KeyboardProps) => {
             let l = keyboardLetters[keyCount]
             const status = `${props.letterStatus.get(l)?? LetterStatus.UNGUESSED}-key`
             keys.push(
-                <button className={`key ${status}`} onMouseDown={() => props.onKeyPress(l, false, false)}>
+                <button disabled={props.disabled} className={`key ${status}`} onMouseDown={() => props.onKeyPress(l, false, false)}>
                     {l}
                 </button>
             )
@@ -34,7 +35,7 @@ const Keyboard = (props: KeyboardProps) => {
         }
         if (rowIndex === lettersPerRow.length - 1) {
             keys.push(
-                <button className="key special-key unguessed-key" onMouseDown={() => props.onBackspace()}>
+                <button disabled={props.disabled} className="key special-key unguessed-key" onMouseDown={() => props.onBackspace()}>
                     🠴
                 </button>
             )
