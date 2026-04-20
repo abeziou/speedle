@@ -1,4 +1,3 @@
-import "./WordRow.css"
 import { LetterStatus } from "../types/Types"
 
 type WordRowProps = {

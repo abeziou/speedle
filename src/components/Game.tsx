@@ -3,15 +3,7 @@ import { GameResult, LetterStatus, getLetterStatusOrdinal } from "../types/Types
 import { useEffect, useState } from 'react'
 import { type Guess, type GameSettings, GameState } from '../types/Types'
 import WordRowPanel from './WordRowPanel'
-import ResultDialog from './ResultDialog'
 import { ValidChoiceList, ValidGuessSet, WORD_LENGTH } from '../words/Constants'
-
-
-type GameProps = {
-    numberOfGuesses: number;
-    rowLength: number;
-    wordSetSize: number;
-}
 
 // makeGoodGuess returns the results for a guess against a chosen word in a "good" game
 const makeGoodGuess = (letters: string[], chosenWord: string): LetterStatus[] => {
@@ -33,15 +25,6 @@ const makeEvilGuess = (letters: string[], wordSet: string[]): LetterStatus[] => 
     return results
 }
 
-const getDefaultSettings = () => {
-    let defaultSettings: GameSettings = {
-        numberOfGuesses: 5,
-        wordSetSize: 30,
-        isEvil: false
-    }
-    return defaultSettings
-}
-
 const createNewGame = (settings: GameSettings) => {
     let newGame = new GameState
 
@@ -59,11 +42,14 @@ const createNewGame = (settings: GameSettings) => {
     return newGame
 }
 
-const Game = () => {
+type GameProps = {
+    settings: GameSettings
+}
+
+const Game = ({ settings }: GameProps) => {
     const [currentLetters, setCurrentLetters] = useState<string[]>([])
-    const [settings, setSettings] = useState<GameSettings>(getDefaultSettings())
     const [errorMessage, setErrorMessage] = useState<null|string>(null)
-    const [gameState, setGameState] = useState<GameState>(createNewGame(getDefaultSettings()))
+    const [gameState, setGameState] = useState<GameState>(createNewGame(settings))
     const [isResultsVisible, setIsResultsVisible] = useState<boolean>(false)
 
     const onNewGame = () => {
@@ -132,11 +118,13 @@ const Game = () => {
     }
 
     return (
-        <div>
-            <h3>
-                <span style={{color: settings.isEvil ? "red" : "green"}}>({settings.isEvil ? "EVIL" : "GOOD"})</span> WORDLE
-            </h3>
-            <WordRowPanel rowCount={settings.numberOfGuesses} rowLength={WORD_LENGTH} currentLetters={currentLetters} pastGuesses={gameState.pastGuesses} />
+        <div className="gamePanel">
+            <WordRowPanel 
+                rowCount={settings.numberOfGuesses} 
+                rowLength={WORD_LENGTH} 
+                currentLetters={currentLetters} 
+                pastGuesses={gameState.pastGuesses} 
+            />
             {errorMessage !== null && <span style={{color: "red"}}>{errorMessage}</span>}
             <Keyboard 
                 letterStatus={gameState.lettersStatus} 
@@ -144,13 +132,6 @@ const Game = () => {
                 onEnter={onEnter} 
                 onBackspace={onBackspace}
                 disabled={gameState.result !== undefined}
-            />
-            <ResultDialog 
-                isVisible={isResultsVisible} 
-                setIsVisible={setIsResultsVisible} 
-                onNewGame={onNewGame} 
-                result={gameState.result} 
-                getCorrectWord={gameState.getCorrectWord}
             />
         </div>
     )
