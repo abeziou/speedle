@@ -7,6 +7,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --letterbox-width: min(calc(20vw - 0.7rem), 5rem)
 }
 
 body {
@@ -36,7 +38,7 @@ body {
   justify-content: center;
   align-items: center;
   margin: 0;
-  border-bottom: 1px lightgray solid;
+  border-bottom: 1px #D3D3D3 solid;
   width: 100%;
   padding: 1rem 0;
 }
@@ -51,7 +53,7 @@ body {
 }
 
 .gamePanel > * {
-  margin: 1rem 0
+  margin: 0.5rem 0
 }
 
 .keyboard {
@@ -121,25 +123,33 @@ body {
   background-color: #898989;
 }
 
+.wordRowPanelGuesses {
+  overflow-y: scroll;
+  height: calc(var(--letterbox-width) * 6)
+}
+
 .wordrow {
   display: flex;
-    justify-content: center;
+  justify-content: center;
+  height: var(--letterbox-width);
+  font-size: 1.2rem;
 }
 
 .letterbox {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.5em;
     margin: 0.2rem;
-    width: min(calc(13vw - 0.7rem), 3rem);
     aspect-ratio: 1 / 1;
-    font-size: 1.2rem;
     font-weight: 700;
 }
 
 .unfilled {
-    border: lightgray solid;
+    border: #D3D3D3 solid;
+}
+
+.ghost {
+  border: #D3D3D359 solid;
 }
 
 .unguessed {
@@ -161,4 +171,53 @@ body {
 
 .notInWord {
     background-color: #898989;
+}
+
+.floatMenu {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #4a4a4a4f;
+  width: 100vw;
+  height: 100vh;
+}
+
+.floatDialog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 2rem;
+  background: white;
+  padding: 2rem;
+  margin: 2rem;
+  border-radius: 0.2rem;
+}
+
+.floatDialog > * {
+  margin: 1rem;
+}
+
+.floatDialogDescription {
+  max-width: 30rem;
+}
+
+.startButton {
+  padding: 1rem;
+  font-size: 2rem;
+  border: 0px;
+  border-radius: 0.2rem;
+  background-color: #50C878;
+  color: white;
+  cursor: pointer;
+}
+
+.startButton:active {
+  filter: brightness(85%);
 }

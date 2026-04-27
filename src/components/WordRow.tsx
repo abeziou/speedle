@@ -3,7 +3,9 @@ import { LetterStatus } from "../types/Types"
 type WordRowProps = {
     length: number;
     letters: string[];
-    results: LetterStatus[];
+    results?: LetterStatus[];
+    isCurrentRow?: boolean;
+    isGhostRow?: boolean;
 }
 
 const WordRow = (props: WordRowProps) => {
@@ -11,7 +13,9 @@ const WordRow = (props: WordRowProps) => {
     for (let i = 0; i < props.length; i++) {
         const letter = props.letters && i < props.letters.length ? props.letters[i].toUpperCase() : ""
         let letterStatus =  "unfilled"
-        if (props.results && i < props.results.length) {
+        if (props.isGhostRow) {
+            letterStatus = "ghost"
+        } else if (props.results && i < props.results.length) {
             letterStatus = `${props.results[i]} guessed`
         } else if (letter !== "") {
             letterStatus = LetterStatus.UNGUESSED
@@ -23,7 +27,7 @@ const WordRow = (props: WordRowProps) => {
         )
     }
     return (
-        <div className="wordrow">
+        <div className="wordrow" id={props.isCurrentRow ? "currentLetterRow": undefined}>
             {letterBoxes}
         </div>
     )

@@ -21,37 +21,14 @@ export const getLetterStatusOrdinal = (ls: LetterStatus): number => {
     }
 }
 
-export const GameResult = {
-    WON: "won",
-    LOST: "lost"
-} as const
-export type GameResult = typeof GameResult[keyof typeof GameResult]
-
 export type Guess = {
     letters: string[];
     results: LetterStatus[];
 }
 
-export class GameState {
-    lettersStatus: Map<string, LetterStatus> = new Map<string, LetterStatus>;
-    pastGuesses: Guess[]= [];
-    isEvil: boolean = false;
-    chosenWord: string = "";
-    wordSet: string[] = [];
-    result?: GameResult = undefined;
-
-    getCorrectWord() {
-        if (this.isEvil) {
-            let randomIndex = Math.floor(Math.random() * (this.wordSet.length + 1))
-            return this.wordSet[randomIndex]
-        } else {    
-            return this.chosenWord
-        }
-    }
-}
-
-export type GameSettings = {
-    numberOfGuesses: number,
-    wordSetSize: number,
-    isEvil: boolean
-}
+export const GameStatus = {
+    NOT_STARTED: "notStarted",
+    IN_PROGRESS: "inProgress",
+    OUT_OF_TIME: "outOfTime",
+} as const
+export type GameStatus = typeof GameStatus[keyof typeof GameStatus]
