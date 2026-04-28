@@ -1,4 +1,5 @@
 import { LetterStatus } from "../types/Types"
+import { Delete } from 'lucide-react';
 
 type KeyboardProps = {
     disabled?: boolean;
@@ -35,7 +36,7 @@ const Keyboard = (props: KeyboardProps) => {
         if (rowIndex === lettersPerRow.length - 1) {
             keys.push(
                 <button disabled={props.disabled} className="key special-key unguessed-key" onClick={() => props.onBackspace()}>
-                    🠴
+                    <Delete />
                 </button>
             )
         }
