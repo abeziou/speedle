@@ -135,8 +135,9 @@ body {
 }
 
 .wordRowPanelGuesses {
-  overflow-y: scroll;
-  height: calc(var(--letterbox-width) * 6)
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  margin-left: 1rem;
 }
 
 .wordRow {

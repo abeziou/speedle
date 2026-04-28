@@ -40,12 +40,12 @@ const WordRowPanel = (props: WordRowPanelProps) => {
                 isCurrentRow 
             />
             <div style={{ marginBottom: '0.5rem' }} />
-            <div style={{ 
-                overflowY: 'scroll', 
-                height: `calc(var(--letterbox-width) * ${props.startingRowCount})`,
-                paddingLeft: '1rem',
-                paddingRight: '1rem', 
-            }}>
+            <div 
+                className="wordRowPanelGuesses"
+                style={{ 
+                    height: `calc(var(--letterbox-width) * ${props.startingRowCount})`,
+                }}
+            >
                 {wordRows}
             </div>
         </div>
