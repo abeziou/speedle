@@ -8,17 +8,53 @@ import CountdownTimer from './components/CountdownTimer'
 import Score from './components/Score'
 
 // makeGuess returns the results for a guess against a chosen word
-const makeGuess = (letters: string[], chosenWord: string): LetterStatus[] => {
+export const makeGuess = (letters: string[], chosenWord: string): LetterStatus[] => {
+    if (letters.length !== chosenWord.length) {
+        return []
+    }
+    
+    let letterCountInChosenWord = new Map<string, number>()
+    let letterIndicesInChosenWord = new Map<string, Set<number>>()
     let chosenWordUpper = chosenWord.toUpperCase()
-    return letters.map(l => l.toUpperCase()).map((l, i): LetterStatus => {
-        if (chosenWordUpper[i] === l) {
-            return LetterStatus.CORRECT
-        } else if (chosenWordUpper.includes(l)) {
-            return LetterStatus.OUT_OF_POSITION
-        } else {
-            return LetterStatus.NOT_IN_WORD
+    for (const [i, l] of chosenWordUpper.split("").entries()) {
+        letterCountInChosenWord.set(l, (letterCountInChosenWord.get(l) ?? 0) + 1)
+        letterIndicesInChosenWord.set(l, (letterIndicesInChosenWord.get(l) ?? new Set()).add(i))
+    }
+
+    let correctGuessesPerLetter = new Map<string, number>()
+    let oopGuessesPerLetter = new Map<string, number>()
+    let lettersUpper = letters.map(l => l.toUpperCase())
+    for (const [i, l] of lettersUpper.entries()) {
+        if (l === chosenWordUpper[i]) {
+            correctGuessesPerLetter.set(l, (correctGuessesPerLetter.get(l) ?? 0) + 1)
         }
-    })
+    }
+
+    let letterStatuses: LetterStatus[] = []
+    for (const [i, l] of lettersUpper.entries()) {
+        let correctIndices = letterIndicesInChosenWord.get(l) ?? new Set()
+        if (correctIndices.size > 0) {
+            // There are correct positions for this letter, can be CORRECT or OUT OF POSITION
+            if (correctIndices.has(i)) {
+                // This is in a correct position for this letter, it's CORRECT
+                letterStatuses.push(LetterStatus.CORRECT)
+                continue
+            }
+            
+            // Count of OUT OF POSITION + CORRECT positions cannot exceed the count of this letter in the chosen word
+            let correctCount = correctGuessesPerLetter.get(l) ?? 0
+            let oopCount = oopGuessesPerLetter.get(l) ?? 0
+            let maxOutOfPositionCount = correctIndices.size - correctCount
+            if (oopCount < maxOutOfPositionCount) {
+                // Adding this OUT OF POSITION count won't exceed count of letters in chosen word
+                letterStatuses.push(LetterStatus.OUT_OF_POSITION)
+                oopGuessesPerLetter.set(l, oopCount + 1)
+                continue
+            }
+        }
+        letterStatuses.push(LetterStatus.NOT_IN_WORD)
+    }
+    return letterStatuses
 }
 
 const Game = () => {
@@ -206,6 +242,9 @@ const Game = () => {
                             <h3 style={{ color: "red" }}>
                                 Game Over
                             </h3>
+                            <div className="floatDialogDescription">
+                                Correct Word: {chosenWord.toLocaleUpperCase()}
+                            </div>
                             <div className="floatDialogDescription">
                                 Final Score: {correctGuesses}
                             </div>
