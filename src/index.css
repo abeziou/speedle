@@ -9,7 +9,6 @@
   -moz-osx-font-smoothing: grayscale;
 
   --letterbox-width: min(calc(20vw - 0.7rem), 5rem);
-  --wobble-bounds: 16px;
 }
 
 body {
@@ -136,8 +135,8 @@ body {
 
 .wordRowPanelGuesses {
   overflow-y: auto;
-  scrollbar-gutter: stable;
-  margin-left: 1rem;
+  overflow-x: hidden;
+  scrollbar-gutter: stable both-edges;
 }
 
 .wordRow {
