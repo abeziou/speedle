@@ -194,7 +194,7 @@ const Game = () => {
             </h1>
             <div className="gamePanel">
                 <WordRowPanel 
-                    startingRowCount={6}
+                    startingRowCount={5}
                     rowLength={WORD_LENGTH} 
                     currentLetters={currentLetters} 
                     pastGuesses={pastGuesses} 

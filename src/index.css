@@ -8,7 +8,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --letterbox-width: min(calc(20vw - 0.7rem), 5rem);
+  --letterbox-width: min(calc(19vw - 0.7rem), 5rem);
 }
 
 body {
@@ -22,7 +22,6 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100%;
 }
 
 #root {
