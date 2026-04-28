@@ -6,6 +6,7 @@ type WordRowPanelProps = {
     rowLength: number;
     currentLetters: string[];
     pastGuesses: Guess[];
+    errorMessage?: string;
 }
 
 const WordRowPanel = (props: WordRowPanelProps) => {
@@ -31,8 +32,13 @@ const WordRowPanel = (props: WordRowPanelProps) => {
     }
 
     return (
-        <div className="wordrowpanel">
-            <WordRow length={props.rowLength} letters={props.currentLetters} results={[]} isCurrentRow />
+        <div className="wordRowPanel">
+            <WordRow 
+                length={props.rowLength} 
+                letters={props.currentLetters} 
+                errorMessage={props.errorMessage}
+                isCurrentRow 
+            />
             <div style={{ marginBottom: '0.5rem' }} />
             <div style={{ 
                 overflowY: 'scroll', 
